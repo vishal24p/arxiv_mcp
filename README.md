@@ -26,10 +26,31 @@ Requires Python 3.10+ and [`uv`](https://docs.astral.sh/uv/).
 
 ## Wire it into your agent
 
+The `arxiv-mcp` script is installed into the venv at `.venv\Scripts\`
+(Windows) or `.venv/bin/` (macOS/Linux). Activate first, or call it by
+path:
+
 ```bash
-arxiv-mcp install            # auto-detect and patch all found agents
+# Activate (then `arxiv-mcp` is on PATH)
+# Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# Windows (cmd):
+.venv\Scripts\activate.bat
+# macOS / Linux:
+source .venv/bin/activate
+
+arxiv-mcp install                # auto-detect and patch all found agents
 arxiv-mcp install --only codex   # one specific agent
-arxiv-mcp install --dry-run  # show what would change, write nothing
+arxiv-mcp install --dry-run      # show what would change, write nothing
+```
+
+If you skip activation, invoke the executable directly:
+
+```bash
+# Windows
+.venv\Scripts\arxiv-mcp.exe install
+# macOS / Linux
+.venv/bin/arxiv-mcp install
 ```
 
 Supported agents:
@@ -42,8 +63,9 @@ Supported agents:
 | Codex CLI | `~/.codex/config.toml` | TOML |
 
 The installer merges an `arxiv` entry into each detected config, backs up
-the original to `<file>.bak`, and never touches other settings. Restart
-the agent and the tools appear.
+the original to `<file>.bak`, and never touches other settings. It is
+idempotent — re-running with the same flag reports the entry already
+exists and writes nothing. Restart the agent and the tools appear.
 
 ## Use
 
@@ -69,6 +91,25 @@ python -m arxiv_mcp
 
 Speaks MCP over stdio. Useful for testing or wiring into something that
 isn't a coding agent.
+
+## Troubleshooting
+
+**`arxiv-mcp` is not recognized as the name of a cmdlet / command**
+
+The script lives in the venv at `.venv\Scripts\arxiv-mcp.exe` (Windows)
+or `.venv/bin/arxiv-mcp` (macOS/Linux). It is only on `PATH` while the
+venv is active. Either activate the venv first, or invoke the
+executable by its full path (see *Wire it into your agent* above).
+
+The script name uses a hyphen (`arxiv-mcp`), not an underscore
+(`arxiv_mcp`). The Python package is `arxiv_mcp`; the console script is
+`arxiv-mcp`.
+
+**Re-running `arxiv-mcp install` reports the entry already exists**
+
+That is the intended idempotent behavior. Backups are at
+`<config>.bak` next to each original file. To force a fresh install,
+delete the `arxiv` key from the relevant config and re-run.
 
 ## License
 
