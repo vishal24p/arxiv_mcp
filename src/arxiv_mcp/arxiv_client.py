@@ -26,19 +26,17 @@ def _papers_dir() -> Path:
     return Path(override).expanduser() if override else _DEFAULT_PAPERS_DIR
 
 
-# Atom namespace. arXiv's API returns Atom feeds; we have to declare it
-# to ElementTree so findtext/findall know where to look.
 ATOM_NS = {"a": "http://www.w3.org/2005/Atom"}
 
 
 @dataclass(frozen=True)
 class Paper:
-    arxiv_id: str   # "1706.03762" — version stripped
+    arxiv_id: str
     title: str
     authors: list[str]
     abstract: str
-    published: str  # ISO 8601 string from arXiv
-    pdf_url: str    # full URL to the PDF
+    published: str
+    pdf_url: str
 
     def to_dict(self) -> dict:
         return {
@@ -55,8 +53,6 @@ def _strip_version(arxiv_id: str) -> str:
     """1706.03762v7 -> 1706.03762. arXiv canonicalizes via the bare id."""
     return re.sub(r"v\d+$", "", arxiv_id)
 
-
-# ---------- search ----------
 
 def search(query: str, max_results: int = 10) -> list[Paper]:
     """Free-text search on arXiv. all:\"phrase\" matches the whole record."""
@@ -98,8 +94,6 @@ def _parse_entries(xml_text: str) -> list[Paper]:
         )
     return papers
 
-
-# ---------- download ----------
 
 def download(arxiv_id: str) -> Path:
     """Stream a PDF into papers/<id>.pdf. Idempotent."""

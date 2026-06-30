@@ -21,12 +21,8 @@ import shutil
 import sys
 from pathlib import Path
 
-# tomli-w is a write-only TOML serializer. tomllib (3.11+) reads, but
-# there's no stdlib TOML *writer* yet, so we ship tomli-w.
 import tomli_w
 
-
-# ---------- candidate paths ----------
 
 def _candidate_paths() -> list[tuple[str, str, Path, str]]:
     """Return [(agent_id, format, path, root_table), ...].
@@ -49,7 +45,6 @@ def _candidate_paths() -> list[tuple[str, str, Path, str]]:
     out.append(("claude-code", "json", home / ".claude.json", "mcpServers"))
     out.append(("cursor", "json", home / ".cursor" / "mcp.json", "mcpServers"))
 
-    # Codex: TOML at ~/.codex/config.toml
     out.append(("codex", "toml", home / ".codex" / "config.toml", "mcp_servers"))
 
     return out
@@ -63,8 +58,6 @@ def _server_entry(python: str, project_dir: Path) -> dict:
         "env": {"ARXIV_MCP_PAPERS_DIR": str(project_dir / "papers")},
     }
 
-
-# ---------- JSON writer (Claude Desktop, Claude Code, Cursor) ----------
 
 def _write_json(
     config_path: Path,
@@ -110,15 +103,8 @@ def _write_json(
     return True
 
 
-# ---------- TOML writer (Codex) ----------
-
 def _load_toml_or_empty(path: Path) -> dict:
-    """Read a TOML file as dict, or return {} if missing/empty/invalid.
-
-    We use tomllib (3.11+). If a future Python <3.11 lands here, swap to
-    `import tomli as tomllib` with a fallback. Our pyproject requires 3.10
-    but the package's own python can be newer.
-    """
+    """Read a TOML file as dict, or return {} if missing/empty/invalid."""
     if sys.version_info >= (3, 11):
         import tomllib
     else:
@@ -133,7 +119,7 @@ def _load_toml_or_empty(path: Path) -> dict:
         data = tomllib.loads(text)
     except Exception as e:
         print(f"  ! {path.name} is not valid TOML ({e}); skipping", file=sys.stderr)
-        return {"__invalid__": True}  # sentinel; caller checks
+        return {"__invalid__": True}
     return data if isinstance(data, dict) else {}
 
 
@@ -189,12 +175,10 @@ def _write(
     raise ValueError(f"unknown config format: {fmt}")
 
 
-# ---------- subcommands ----------
-
 def cmd_install(args: argparse.Namespace) -> int:
     """Detect installed agents and patch their MCP configs."""
     python = sys.executable
-    project_dir = Path(__file__).resolve().parent.parent.parent  # src/.. -> project root
+    project_dir = Path(__file__).resolve().parent.parent.parent
     server_entry = _server_entry(python, project_dir)
 
     candidates = _candidate_paths()
@@ -202,8 +186,6 @@ def cmd_install(args: argparse.Namespace) -> int:
     if only:
         targets = [(n, f, p, k) for (n, f, p, k) in candidates if n in only]
     else:
-        # Only touch agents whose config file already exists. We don't
-        # want to scatter fresh configs for agents the user hasn't set up.
         targets = [(n, f, p, k) for (n, f, p, k) in candidates if p.exists()]
 
     if not targets:
