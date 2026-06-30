@@ -1,0 +1,48 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# --- Build / packaging ---
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# --- Virtual envs ---
+.venv/
+venv/
+env/
+
+# --- IDE / editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Test / coverage ---
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# --- Project runtime: downloaded papers, server config backups ---
+# (the directories themselves are tracked via .gitkeep; the contents are not)
+papers/*.pdf
+papers/*.pdf.bak
+!papers/.gitkeep
+
+# Installer writes backups next to the agent's config file. If anyone
+# runs the installer locally it shouldn't pollute the repo.
+*.json.bak
+*.toml.bak
+
+# Environment overrides
+.env
+.env.local
