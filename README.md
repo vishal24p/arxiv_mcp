@@ -17,7 +17,7 @@ API (`export.arxiv.org`) — no key, no signup, no rate-limit token.
 
 ```bash
 git clone https://github.com/vishal24p/arxiv_mcp.git
-cd arxiv-mcp
+cd arxiv_mcp
 uv venv
 uv pip install -e .
 ```
