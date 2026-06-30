@@ -16,7 +16,7 @@ API (`export.arxiv.org`) — no key, no signup, no rate-limit token.
 ## Install
 
 ```bash
-git clone <your-repo-url> arxiv-mcp
+git clone https://github.com/vishal24p/arxiv_mcp.git
 cd arxiv-mcp
 uv venv
 uv pip install -e .
